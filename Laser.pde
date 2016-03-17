@@ -6,7 +6,7 @@ class Laser {
       
     }
     void afficher() {
-      image(tir_laser, x+33, y);
+      image(tir_laser, x+30, y-20);
     }
     void update(){
       this.y -= this.speed;
