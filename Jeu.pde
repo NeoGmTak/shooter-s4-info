@@ -1,5 +1,7 @@
 import processing.net.*;
 import processing.serial.*;
+import processing.sound.*;
+SoundFile file;
 
 //int LargeRes;
 int xvalue = 0;
@@ -12,10 +14,12 @@ PImage tir_laser;
 PImage space;
 PImage enemy;
 PImage ecran;
+PImage vie;
+int coeur=3;
 PFont titre, police;
 int ecranwidth, ecranheight, start;
 Serial port;
-boolean demarrage = false;
+int demarrage = 0;
 
 Balle maballe = new Balle(100, 100);
 int nbLaser = 5;
@@ -27,11 +31,13 @@ void setup() {
     tir_laser = loadImage("laser.png");
     space = loadImage("espace.jpg");
     enemy = loadImage("enemy.png");
+    vie = loadImage("coeur.png");
     vaisseau.resize(hauteur_vaisseau, largeur_vaisseau);
     size(1024, 708);
     space.resize(1024, 708);
     enemy.resize(40, 40);
     tir_laser.resize(10, 20);
+    vie.resize(40, 40);
     println(Serial.list()); //Affiche dans la console la liste des ports série disponibles
     port = new Serial(this, "/dev/cu.usbmodem1411", 9600); // !!!! !!!!! A CHANGER   !!!!!!!!!!!!!
     port.bufferUntil('\n'); //Attendre arrivée d'un saut de ligne pour générer évène
@@ -45,11 +51,13 @@ void setup() {
     ecran.resize(1024, 708);
     police = loadFont("Bit-Darling10-sRB-48.vlw");
     textFont(police, 20);
+    file = new SoundFile(this, "Dragonforce.mp3");
+        file.play();
 }
 
 void draw() {
 
-    if (demarrage == false) {
+if (demarrage == 0) {
 
         image(ecran, 0, 0);
         textAlign(CENTER);
@@ -58,13 +66,19 @@ void draw() {
         fill(255, 255, 255);
 
         if (fire == 1) {
-            demarrage = true;
+            demarrage = 1;
         }
 
 
-    } else {
+    }
+    else if(demarrage ==1) {
         image(space, 0, 0);
-        image(enemy, 0, 0);
+        for(int i=0;i<coeur;i++) {
+        image(vie,55*i + 20,10,40,40);
+        textAlign(CENTER);
+        text("Score ", 850, 40);
+        fill(255, 255, 255);
+        }
         //fill(130,130,130);
         //rect(0,0,width,height);
         noStroke();
@@ -79,7 +93,20 @@ void draw() {
             laser[i].afficher();
         }
     }
-}
+    else {
+      
+        textAlign(CENTER);
+        fill(0,0,0);
+        rect(0,0,width,height);
+        fill(255, 255, 255);
+        textFont(police, 60);
+        text("GAME OVER ", 520, 300);
+        textFont(police, 30);
+        text("Votre score est de", 520, 400);
+      
+      
+    }
+  }
 void shoot() {
     laser[laserIndex].x = maballe.x;
     laser[laserIndex].y = maballe.y;
