@@ -113,6 +113,7 @@ if (demarrage == 0) {
             for (int j = 0; j < ennemi.size(); j++) {
               if(ennemi.get(j).testCollision(laser[i].x, laser[i].y)){
                 ennemi.remove(j);
+                //laser[i] = null;
                 score += 1;
               } else if(ennemi.get(j).y > 758){
                 ennemi.remove(j);
