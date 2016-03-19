@@ -2,7 +2,7 @@ class Ennemi {
   float x = 50 + (int)(Math.random()*(1024-50)); ;
   float y = -50;
   int r = 50;
-  float speed =  0.5 + (float)Math.random() * (1.5 - 0.5);
+  float speed =  0.5 + (float)Math.random() * (3.5 - 0.5);
   Ennemi(){
   
   }
