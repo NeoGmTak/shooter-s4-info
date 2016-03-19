@@ -10,8 +10,9 @@ int hauteur_vaisseau = 70;
 PImage vaisseau;
 PImage tir_laser;
 PImage space;
-PImage enemy;
+//PImage enemy;
 PImage ecran;
+PImage asteroid;
 PFont titre, police;
 int ecranwidth, ecranheight, start;
 Serial port;
@@ -22,18 +23,23 @@ int nbLaser = 5;
 Laser[] laser = new Laser[nbLaser];
 int laserIndex = 0;
 
+ArrayList<Ennemi> ennemi = new ArrayList<Ennemi>();
+
 void setup() {
     vaisseau = loadImage("vaisseau.png");
     tir_laser = loadImage("laser.png");
     space = loadImage("espace.jpg");
-    enemy = loadImage("enemy.png");
+    asteroid = loadImage("asteroid.png");
+    //enemy = loadImage("enemy.png");
     vaisseau.resize(hauteur_vaisseau, largeur_vaisseau);
+    ennemi.add(new Ennemi());
+    ennemi.add(new Ennemi());
     size(1024, 708);
     space.resize(1024, 708);
-    enemy.resize(40, 40);
+    //enemy.resize(40, 40);
     tir_laser.resize(10, 20);
     println(Serial.list()); //Affiche dans la console la liste des ports série disponibles
-    port = new Serial(this, "/dev/cu.usbmodem1411", 9600); // !!!! !!!!! A CHANGER   !!!!!!!!!!!!!
+    port = new Serial(this, "/COM3", 9600); // !!!! !!!!! A CHANGER   !!!!!!!!!!!!!
     port.bufferUntil('\n'); //Attendre arrivée d'un saut de ligne pour générer évène
     fill(0, 0, 0);
     for (int i = 0; i < nbLaser; i++) {
@@ -45,6 +51,7 @@ void setup() {
     ecran.resize(1024, 708);
     police = loadFont("Bit-Darling10-sRB-48.vlw");
     textFont(police, 20);
+    noStroke();
 }
 
 void draw() {
@@ -64,10 +71,9 @@ void draw() {
 
     } else {
         image(space, 0, 0);
-        image(enemy, 0, 0);
         //fill(130,130,130);
         //rect(0,0,width,height);
-        noStroke();
+        
         maballe.bouge();
         maballe.testEcran();
         maballe.afficher();
@@ -77,7 +83,16 @@ void draw() {
         for (int i = 0; i < nbLaser; i += 1) {
             laser[i].update();
             laser[i].afficher();
+            for (Ennemi asteroid : ennemi) {
+              asteroid.update();
+              asteroid.afficher();
+              asteroid.testCollision(laser[i].x, laser[i].y);
+            }
         }
+        /*for (int i = 0; i < ennemi.size(); i++){
+          ennemi.afficher();
+        }*/
+        
     }
 }
 void shoot() {
@@ -86,7 +101,7 @@ void shoot() {
     laser[laserIndex].speed = 10;
     laserIndex += 1;
     for (int i = 0; i < nbLaser; i += 1) {
-        laser[i].afficher();
+        laser[i].afficher();   
     }
     if (laserIndex >= nbLaser) {
         laserIndex = 0;
