@@ -1,23 +1,24 @@
 class Ennemi {
-  int x = 50 + (int)(Math.random()*(1024-50)); ;
-  int y = 50;
+  float x = 50 + (int)(Math.random()*(1024-50)); ;
+  float y = -50;
   int r = 50;
-  int speed = 1;
+  float speed =  0.5 + (float)Math.random() * (1.5 - 0.5);
   Ennemi(){
   
   }
   void afficher() {
     image(asteroid, x, y);
-    ellipse(x, y, r*2, r*2);
+    ellipse(x+r, y+r, r*2, r*2);
     fill(0, 0, 0, 0);
   }
   void update(){
     this.y += this.speed;
   }
-  void testCollision(int posX,int posY) {
+  boolean testCollision(float posX,float posY) {
     if(dist(x, y, posX, posY) < r) {
-        ennemi.remove(this);
-    } 
-
+      return true;
+    } else {
+      return false;
+    }
   }
 }

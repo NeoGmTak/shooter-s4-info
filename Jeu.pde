@@ -21,12 +21,12 @@ PFont titre, police;
 int ecranwidth, ecranheight, start;
 Serial port;
 int demarrage = 0;
+int score = 0;
 
 Balle maballe = new Balle(100, 100);
 int nbLaser = 5;
 Laser[] laser = new Laser[nbLaser];
 int laserIndex = 0;
-
 ArrayList<Ennemi> ennemi = new ArrayList<Ennemi>();
 
 void setup() {
@@ -36,8 +36,6 @@ void setup() {
     asteroid = loadImage("asteroid.png");
     vie = loadImage("coeur.png");
     vaisseau.resize(hauteur_vaisseau, largeur_vaisseau);
-    ennemi.add(new Ennemi());
-    ennemi.add(new Ennemi());
     size(1024, 708);
     space.resize(1024, 708);
     //enemy.resize(40, 40);
@@ -81,31 +79,47 @@ if (demarrage == 0) {
         image(space, 0, 0);
         for(int i=0;i<coeur;i++) {
           image(vie,55*i + 20,10,40,40);
-          textAlign(CENTER);
-          text("Score ", 850, 40);
-          fill(255, 255, 255);
         }
-        //fill(130,130,130);
-        //rect(0,0,width,height);
+        textAlign(CENTER);
+        fill(255, 255, 255);
+        text("Score "+score, 850, 40);
+        
+        if (frameCount % 60 == 0) {
+         ennemi.add(new Ennemi());
+        }
+        
         
         maballe.bouge();
         maballe.testEcran();
         maballe.afficher();
+        for (int i = 0; i < ennemi.size(); i++) {
+          ennemi.get(i).update();
+          ennemi.get(i).afficher();
+          if(maballe.testCollision(ennemi.get(i).x, ennemi.get(i).y)){
+            ennemi.remove(i);
+            coeur--;
+            if(coeur == 0){
+              demarrage = 2;
+            }
+          } 
+        }
         if (fire == 1) {
             shoot();
         }
+        
         for (int i = 0; i < nbLaser; i += 1) {
             laser[i].update();
             laser[i].afficher();
-            for (Ennemi asteroid : ennemi) {
-              asteroid.update();
-              asteroid.afficher();
-              asteroid.testCollision(laser[i].x, laser[i].y);
+            for (int j = 0; j < ennemi.size(); j++) {
+              if(ennemi.get(j).testCollision(laser[i].x, laser[i].y)){
+                ennemi.remove(j);
+                score += 1;
+              } else if(ennemi.get(j).y > 758){
+                ennemi.remove(j);
+              }
             }
         }
-        /*for (int i = 0; i < ennemi.size(); i++){
-          ennemi.afficher();
-        }*/
+        
         
     } else {
       
@@ -116,7 +130,9 @@ if (demarrage == 0) {
         textFont(police, 60);
         text("GAME OVER ", 520, 300);
         textFont(police, 30);
-        text("Votre score est de", 520, 400);
+        text("Votre score est de ", 510, 350);
+        textAlign(CENTER);
+        text(score, 520, 400);
       
       
     }
